@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -112,6 +113,28 @@ class _HomePageState extends State<HomePage> {
         children: [
           FloatingActionButton(
             onPressed: (){
+              _getLocation().then((value){
+                print("value====================: ${value.latitude.toString()} + ${value.longitude.toString()}");
+                _markers.add(
+                  Marker(
+                    markerId: MarkerId("current"),
+                    position: LatLng(value.latitude, value.longitude), // লোকেশনের জন্য সঠিক প্যারামিটার
+                    infoWindow: InfoWindow(title: "My Location"),
+                  ),
+                );
+CameraPosition cameraPosition = CameraPosition(
+  zoom: 16,
+  target: LatLng(value.latitude, value.longitude),
+);
+_mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+              });
+            },
+            child: Icon(Icons.my_location),
+          ),
+          SizedBox(width: 20,),
+          FloatingActionButton(
+            onPressed: (){
               _addNewMarker();
             },
             child: Icon(Icons.location_on),
@@ -150,7 +173,6 @@ class _HomePageState extends State<HomePage> {
           circles: _circles,
           polygons: _polygons,
         ),
-
         Positioned(
           top: 40,
           left: 20,
@@ -179,7 +201,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
       ),
-
     );
   }
 
@@ -209,5 +230,15 @@ void _goBackMyHome(){
           88.58675906812256),
     )));
 }
+Future<Position> _getLocation() async {
+         await Geolocator.requestPermission().then((value)  {
+
+         }
+         ).onError((error, stackTrace) {
+           print("error====================: $error");
+         });
+         return await Geolocator.getCurrentPosition();
+    }
+
 
 }

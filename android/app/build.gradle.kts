@@ -7,8 +7,9 @@ plugins {
 
 android {
     namespace = "com.example.google_map"
-    compileSdk = flutter.compileSdkVersion
-    //ndkVersion = flutter.ndkVersion
+    compileSdk = 35
+    //compileSdk = flutter.compileSdkVersion
+            //ndkVersion = flutter.ndkVersion
     ndkVersion = "28.0.13004108"
 
     compileOptions {
@@ -25,8 +26,8 @@ android {
         applicationId = "com.example.google_map"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 21
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
