@@ -1,4 +1,7 @@
 # Miscellaneous
+
+android/app/src/main/AndroidManifest.xml
+
 *.class
 *.log
 *.pyc
