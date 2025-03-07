@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_map/home_page/home_page.dart';
 
+import '../geolocator/geolocator_page.dart';
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
    debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: GeHomePage(),
     );
   }
 }
