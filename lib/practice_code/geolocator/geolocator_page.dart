@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -11,15 +12,21 @@ class GeHomePage extends StatefulWidget {
 
 class _GeHomePageState extends State<GeHomePage> {
   Position? _currentPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    // TODO: implement initState
+    _listenCurrentLocation();
+  }
   
   Future <void>  _getCurrentLocation()async{
     if(await _checkPermission()){
       if(await _isGpsEnabled()){
         ///one time
-        _currentPosition = await Geolocator.getCurrentPosition(
+        Geolocator.getCurrentPosition(
           locationSettings: LocationSettings(
             accuracy: LocationAccuracy.best,
-
           )
         );
         setState(() {
@@ -37,14 +44,18 @@ class _GeHomePageState extends State<GeHomePage> {
   Future <void>  _listenCurrentLocation()async{
     if(await _checkPermission()){
       if(await _isGpsEnabled()){
-        _currentPosition = await Geolocator.getCurrentPosition(
+        /// always location
+      Geolocator.getPositionStream(
             locationSettings: LocationSettings(
               accuracy: LocationAccuracy.best,
-            )
-        );
+              distanceFilter: 1,
+            ),
+        ).listen((pos){
+          print(pos);
+      });
         setState(() {
-
-        });
+        }
+        );
       }else{
         await _requestGpsService();
       }
@@ -91,3 +102,4 @@ Future<void> _requestGpsService()async{
     );
   }
 }
+*/

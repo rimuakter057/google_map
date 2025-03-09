@@ -1,3 +1,4 @@
+/*
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -199,8 +200,7 @@ _mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
             ),
           ),
         ),
-      ],
-      ),
+      ],),
     );
   }
 
@@ -242,3 +242,4 @@ Future<Position> _getLocation() async {
 
 
 }
+*/

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:google_map/home_page/home_page.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:google_map/ui/screen/map_home_page/map_home_page.dart';
 
-import '../geolocator/geolocator_page.dart';
+
+
 
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-   debugShowCheckedModeBanner: false,
-      home: GeHomePage(),
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Live Location',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: MapScreen(),
     );
   }
 }
