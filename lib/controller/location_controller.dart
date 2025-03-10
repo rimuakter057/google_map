@@ -30,13 +30,13 @@ class MapController extends GetxController {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Check if location service is enabled
+
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return;
     }
 
-    // Check permission
+
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -45,11 +45,11 @@ class MapController extends GetxController {
       }
     }
 
-    // Get real-time location updates
+
     positionStream = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // update if position changes by 10 meters
+        distanceFilter: 10,
       ),
     ).listen((Position position) {
       LatLng newPosition = LatLng(position.latitude, position.longitude);
@@ -60,8 +60,6 @@ class MapController extends GetxController {
 
       currentPosition = newPosition;
       polylineCoordinates.add(newPosition);
-
-      // After receiving location, update map
       updateMap();
     });
   }
@@ -89,12 +87,10 @@ class MapController extends GetxController {
         ),
       };
 
-      // Zoom into the current location
       mapController.animateCamera(CameraUpdate.newLatLng(currentPosition!));
     }
   }
 
-  // Search for location and add marker
   Future<void> searchLocation(String query) async {
     List<Location> locations = await locationFromAddress(query);
     if (locations.isNotEmpty) {
@@ -113,7 +109,6 @@ class MapController extends GetxController {
     }
   }
 
-  // Add marker on tap at any location and show location name
   Future<void> onMapTapped(LatLng tappedPosition) async {
     List<Placemark> placemarks = await placemarkFromCoordinates(tappedPosition.latitude, tappedPosition.longitude);
     String locationName = placemarks.isNotEmpty ? placemarks.first.name ?? 'Unknown Location' : 'Unknown Location';

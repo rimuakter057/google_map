@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../controller/location_controller.dart';
 
+//
+
 class MapScreen extends StatelessWidget {
   final MapController mapController = Get.put(MapController());
+  MapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +17,7 @@ class MapScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
+            ///search bar
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search location...',
@@ -26,22 +30,33 @@ class MapScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Obx(() => GoogleMap(
-              initialCameraPosition: CameraPosition(
-                // Set camera position to current location if available
-                target: mapController.currentPosition ?? LatLng(23.8103, 90.4125), // Default Dhaka if location is null
-                zoom: 15,
+            /// google map
+            child: Obx(
+              () => GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target:
+                      mapController.currentPosition ??
+                      LatLng(
+                        23.8103,
+                        90.4125,
+                      ), // Default Dhaka if location is null
+                  zoom: 15,
+                ),
+                markers: {
+                  ...mapController.markers.value,
+                  ...mapController.searchResults.value,
+                },
+                polylines: mapController.polylines.value,
+                onMapCreated: mapController.onMapCreated,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                onTap: mapController.onMapTapped,
               ),
-              markers: {...mapController.markers.value, ...mapController.searchResults.value},
-              polylines: mapController.polylines.value,
-              onMapCreated: mapController.onMapCreated,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              onTap: mapController.onMapTapped, // Add tap listener for adding markers
-            )),
+            ),
           ),
         ],
       ),
+      ///current location button
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (mapController.currentPosition != null) {
