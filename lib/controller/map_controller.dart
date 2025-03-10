@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:flutter/material.dart';
 
 class MapController extends GetxController {
   late GoogleMapController mapController;
@@ -13,8 +13,8 @@ class MapController extends GetxController {
 
   final markers = <Marker>{}.obs;
   final polylines = <Polyline>{}.obs;
-
   final searchResults = <Marker>{}.obs;
+  final isLocationLoading = true.obs;
 
   @override
   void onInit() {
@@ -30,12 +30,10 @@ class MapController extends GetxController {
     bool serviceEnabled;
     LocationPermission permission;
 
-
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return;
     }
-
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -44,7 +42,6 @@ class MapController extends GetxController {
         return;
       }
     }
-
 
     positionStream = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
@@ -60,6 +57,7 @@ class MapController extends GetxController {
 
       currentPosition = newPosition;
       polylineCoordinates.add(newPosition);
+      isLocationLoading.value = false;
       updateMap();
     });
   }
@@ -92,38 +90,46 @@ class MapController extends GetxController {
   }
 
   Future<void> searchLocation(String query) async {
-    List<Location> locations = await locationFromAddress(query);
-    if (locations.isNotEmpty) {
-      LatLng searchPosition = LatLng(locations.first.latitude, locations.first.longitude);
-      searchResults.value = {
-        Marker(
-          markerId: MarkerId("search_location"),
-          position: searchPosition,
-          infoWindow: InfoWindow(
-            title: query,
-            snippet: "${searchPosition.latitude}, ${searchPosition.longitude}",
+    try {
+      List<Location> locations = await locationFromAddress(query);
+      if (locations.isNotEmpty) {
+        LatLng searchPosition = LatLng(locations.first.latitude, locations.first.longitude);
+        searchResults.value = {
+          Marker(
+            markerId: MarkerId("search_location"),
+            position: searchPosition,
+            infoWindow: InfoWindow(
+              title: query,
+              snippet: "${searchPosition.latitude}, ${searchPosition.longitude}",
+            ),
           ),
-        ),
-      };
-      mapController.animateCamera(CameraUpdate.newLatLng(searchPosition));
+        };
+        mapController.animateCamera(CameraUpdate.newLatLng(searchPosition));
+      }
+    } catch (e) {
+      print("Error searching location: $e");
     }
   }
 
   Future<void> onMapTapped(LatLng tappedPosition) async {
-    List<Placemark> placemarks = await placemarkFromCoordinates(tappedPosition.latitude, tappedPosition.longitude);
-    String locationName = placemarks.isNotEmpty ? placemarks.first.name ?? 'Unknown Location' : 'Unknown Location';
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(tappedPosition.latitude, tappedPosition.longitude);
+      String locationName = placemarks.isNotEmpty ? placemarks.first.name ?? 'Unknown Location' : 'Unknown Location';
 
-    markers.clear();
-    markers.add(Marker(
-      markerId: MarkerId(tappedPosition.toString()),
-      position: tappedPosition,
-      infoWindow: InfoWindow(
-        title: locationName,
-        snippet: "Latitude: ${tappedPosition.latitude}, Longitude: ${tappedPosition.longitude}",
-      ),
-    ));
+      markers.clear();
+      markers.add(Marker(
+        markerId: MarkerId(tappedPosition.toString()),
+        position: tappedPosition,
+        infoWindow: InfoWindow(
+          title: locationName,
+          snippet: "Latitude: ${tappedPosition.latitude}, Longitude: ${tappedPosition.longitude}",
+        ),
+      ));
 
-    mapController.animateCamera(CameraUpdate.newLatLng(tappedPosition));
+      mapController.animateCamera(CameraUpdate.newLatLng(tappedPosition));
+    } catch (e) {
+      print("Error getting tapped location: $e");
+    }
   }
 
   @override

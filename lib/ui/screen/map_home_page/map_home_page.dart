@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_map/controller/map_controller.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../../controller/location_controller.dart';
 
-//
 
 class MapScreen extends StatelessWidget {
   final MapController mapController = Get.put(MapController());
@@ -30,16 +29,14 @@ class MapScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            /// google map
+            ///google map
             child: Obx(
-              () => GoogleMap(
+                  () => mapController.isLocationLoading.value
+                  ? Center(child: CircularProgressIndicator())
+                  : GoogleMap(
                 initialCameraPosition: CameraPosition(
-                  target:
-                      mapController.currentPosition ??
-                      LatLng(
-                        23.8103,
-                        90.4125,
-                      ), // Default Dhaka if location is null
+                  target: mapController.currentPosition ??
+                      LatLng(23.8103, 90.4125),
                   zoom: 15,
                 ),
                 markers: {
@@ -56,7 +53,7 @@ class MapScreen extends StatelessWidget {
           ),
         ],
       ),
-      ///current location button
+      ////current location button
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (mapController.currentPosition != null) {
